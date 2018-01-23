@@ -18,7 +18,7 @@ Homepage: https://github.com/bahmanm/euler-ml
 ################################ owlib ########################################
 Library eulerlib
   Path: src
-  Modules:
+  Modules: P1
   BuildDepends: batteries (>= 2.7.0)
 
 Executable test_euler
