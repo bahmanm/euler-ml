@@ -15,10 +15,10 @@ Description:
 
 Homepage: https://github.com/bahmanm/euler-ml
 
-################################ owlib ########################################
+############################### eulerlib #######################################
 Library eulerlib
   Path: src
-  Modules: P1
+  Modules: P1, P2
   BuildDepends: batteries (>= 2.7.0)
 
 Executable test_euler
@@ -35,7 +35,7 @@ Test test_euler
   WorkingDirectory: test/
   TestTools: oasis, test_euler
 
-################################### ow ########################################
+################################## euler #######################################
 Executable euler
   Path: src
   MainIs: euler.ml
