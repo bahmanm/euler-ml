@@ -3,4 +3,5 @@
 open Batteries
 
 val solve: int -> int
-(** [solve] https://projecteuler.net/problem=1 *)
+(** [solve n]
+    https://projecteuler.net/problem=1 where [n=1000] *)
