@@ -4,16 +4,16 @@ open Batteries
 module Set = BatSet.Int
 
 let prime_factors n =
-  let rec _prime_factors n f factors =
+  let rec prime_factors' n f factors =
     if (n = f) then
       factors |> Set.add f
     else if (n mod f = 0) then
       factors |> Set.add f |>
-      _prime_factors (n / f) f
+      prime_factors' (n / f) f
     else
-      factors |> _prime_factors n (f + 1)
+      factors |> prime_factors' n (f + 1)
   in
-  Set.empty |> _prime_factors n 2
+  Set.empty |> prime_factors' n 2
 
 let solve n =
   let rec solve' result m =
