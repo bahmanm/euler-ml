@@ -1,7 +1,6 @@
 (* Author: Bahman Movaqar <Bahman@BahmanM.com> *)
 open Batteries
 
-(*TODO remove 0 from the beginning *)
 let rec gen_numbers digits len =
   if len = 0 then
     [0]
