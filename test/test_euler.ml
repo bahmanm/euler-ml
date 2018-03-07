@@ -10,4 +10,5 @@ let _ =
   run_test_tt_main Test_p22.p22_suite;
   run_test_tt_main Test_p41.p41_suite;
   run_test_tt_main Test_p45.p45_suite;
-  run_test_tt_main Test_p47.p47_suite
+  run_test_tt_main Test_p47.p47_suite;
+  run_test_tt_main Test_p54.p54_suite
