@@ -1,87 +1,196 @@
 (* Author: Bahman Movaqar <Bahman@BahmanM.com> *)
 open Batteries
 
-type suit_t = SC | SH | SD | SS
-type card_t = Card of int * suit_t
-type hand_t = Hand of card_t list
+(** Card suits *)
+type suit_t =
+  | SC (** Clubs *)
+  | SH (** Hearts *)
+  | SD (** Diamonds *)
+  | SS (** Spades *)
 
 (*******************************************************************************)
-module HandRules = struct
-  let sort_values =
-    List.map (fun (Card(v, _)) -> v)
-    %> List.sort Int.compare
+module Value : sig
+  (** Card values *)
+  type t = | V2 | V3 | V4 | V5 | V6 | V7 | V8 | V9
+           | VT | VJ | VQ | VK | VA
 
-  let card_suits =
-    List.map (fun (Card(_, s)) -> s)
+  (** [of_int i] converts [i] to card values. *)
+  val of_int: int -> t
 
-  let high_card (Hand(cards)) =
-    cards |> sort_values |> List.last
+  (** [compare v1 v2] compares [v1] and [v2].*)
+  val compare: t -> t -> int
 
-  let is_one_pair (Hand(cards)) =
-    let vals = cards |> sort_values in
-    let groups = vals |> List.group_consecutive (=) in
-    match (groups |> List.map List.length) with
-    | [2; 1; 1; 1] | [1; 2; 1; 1] | [1; 1; 2; 1] | [1; 1; 1; 2] -> true
-    | _ -> false
+  (** [is_succ v w] determines if [v] is the immediate successor
+        of [w].*)
+  val is_succ_of: t -> t -> bool
+end = struct
+  type t = | V2 | V3 | V4 | V5 | V6 | V7 | V8 | V9
+           | VT | VJ | VQ | VK | VA
 
-  let is_two_pairs (Hand(cards)) =
-    let vals = cards |> sort_values in
-    let groups = vals |> List.group_consecutive (=) in
-    match (groups |> List.map List.length) with
-    | [2; 2; 1] | [2; 1; 2] | [1; 2; 2] -> true
-    | _ -> false
+  let of_int = function
+    | 2 -> V2 | 3 -> V3 | 4 -> V4 | 5 -> V5
+    | 6 -> V6 | 7 -> V7 | 8 -> V8 | 9 -> V9
+    | 10 -> VT | 11 -> VJ | 12 -> VQ
+    | 13 -> VK | 14 -> VA
+    | _ -> invalid_arg "invalid value"
 
-  let is_three_of_a_kind (Hand(cards)) =
-    let vals = cards |> sort_values in
-    let groups = vals |> List.group_consecutive (=) in
-    groups |> List.map List.length |> List.max = 3
+  let to_int = function
+    | V2 -> 2 | V3 -> 3 | V4 -> 4 | V5 -> 5
+    | V6 -> 6 | V7 -> 7 | V8 -> 8 | V9 -> 9
+    | VT -> 10 | VJ -> 11 | VQ -> 12
+    | VK -> 13 | VA -> 14
 
-  let is_straight (Hand(cards)) =
-    match (cards |> sort_values) with
-    | [v1; v2; v3; v4; v5] ->
-      v5 = (v4 + 1) && v4 = (v3 + 1) && v3 = (v2 + 1) && v2 = (v1 + 1)
-    | _ -> false
+  let compare v1 v2 =
+    Int.compare (to_int v1) (to_int v2)
 
-  let is_flush (Hand(cards)) =
-    match (cards |> card_suits |> List.unique) with
-    | [s] -> true
-    | _ -> false
-
-  let is_full_house (Hand(cards)) =
-    let vals = cards |> sort_values in
-    let groups = vals |> List.group_consecutive (=) in
-    match groups with
-    | [g1; _] when (List.length g1 = 2) || (List.length g1 = 3) -> true
-    | _ -> false
-
-  let is_four_of_a_kind (Hand(cards)) =
-    let vals = cards |> sort_values in
-    let groups = vals |> List.group_consecutive (=) in
-    match groups with
-    | [g1; _] when (List.length g1 = 1) || (List.length g1 = 4) -> true
-    | _ -> false
-
-  let is_royal_flush (Hand(cards)) =
-    match (cards |> card_suits |> List.unique) with
-    | [s] -> begin
-        match (cards |> sort_values) with
-        | [10; 11; 12; 13; 14] -> true
-        | _ -> false
-      end
-    | _ -> false
-
-  let is_straight_flush (Hand(cards)) =
-    match (cards |> card_suits |> List.unique) with
-    | [s] -> begin
-        match (cards |> sort_values) with
-        | [10; 11; 12; 13; 14] -> true
-        | _ -> false
-      end
-    | _ -> false
+  let is_succ_of v w =
+    match w with
+    | VA -> false
+    | _ -> (to_int v) = (to_int w) + 1
 end
 
 (*******************************************************************************)
-module HandLoader = struct
+(** Card *)
+type card_t = Card of Value.t * suit_t
+
+(** Hand of cards *)
+type hand_t = Hand of card_t list
+
+(*******************************************************************************)
+module HandCompare : sig
+  (** [compare h1 h2] compares [h1] and [h2]*)
+  val compare: hand_t -> hand_t -> int
+end = struct
+  type rank_t =
+    | RoyalFlush
+    | StraightFlush
+    | FourOfAKind
+    | FullHouse
+    | Flush
+    | Straight
+    | ThreeOfAKind
+    | TwoPairs
+    | OnePair
+    | HighCard
+
+  let to_int = function
+    | RoyalFlush -> 1000
+    | StraightFlush -> 900
+    | FourOfAKind -> 800
+    | FullHouse -> 700
+    | Flush -> 600
+    | Straight -> 500
+    | ThreeOfAKind -> 400
+    | TwoPairs -> 300
+    | OnePair -> 200
+    | HighCard -> 100
+
+  let values h =
+    h |> List.map (fun (v, _) -> v)
+
+  let sort_values h =
+    h |> values |> List.sort (fun v1 v2 -> Value.compare v2 v1)
+
+  let suits h =
+    h |> List.map (fun (_, s) -> s)
+
+  let same_suit h =
+    h |> suits |> List.unique |> List.length = 1
+
+  (* * * * * * * * * * * * * * * * * * *)
+  let highCard h =
+    Some(to_int HighCard, h |> sort_values)
+
+  let onePair h =
+    match h |> sort_values |> List.group_consecutive (=) with
+    | [[p1; p2]; [v1]; [v2]; [v3]]
+    | [[v1]; [p1; p2]; [v2]; [v3]]
+    | [[v1]; [v2]; [p1; p2]; [v3]]
+    | [[v1]; [v2]; [v3]; [p1; p2]] ->
+      Some(to_int OnePair, [p1; v1; v2; v3])
+    | _ -> None
+
+  let twoPairs h =
+    match h |> sort_values |> List.group_consecutive (=) with
+    | [[p1; p2]; [p'1; p'2]; [v]]
+    | [[p1; p2]; [v]; [p'1; p'2]]
+    | [[v]; [p1; p2]; [p'1; p'2]] ->
+      Some(to_int TwoPairs, [p1; p'1; v])
+    | _ -> None
+
+  let threeOfAKind h =
+    match h |> sort_values |> List.group_consecutive (=) with
+    | [[t1; t2; t3]; [v1]; [v2]]
+    | [[v1]; [t1; t2; t3]; [v2]]
+    | [[v1]; [v2]; [t1; t2; t3]] ->
+      Some(to_int ThreeOfAKind, [t1; v1; v2])
+    | _ -> None
+
+  let straight h =
+    match h |> sort_values with
+      | [v1; v2; v3; v4; v5] when
+          (Value.is_succ_of v1 v2) && (Value.is_succ_of v2 v3) &&
+          (Value.is_succ_of v3 v4) && (Value.is_succ_of v4 v5) ->
+        Some(to_int Straight, [v5])
+      | _ -> None
+
+  let flush h =
+    if h |> same_suit |> not then
+      None
+    else
+      Some(to_int Flush, h |> sort_values)
+
+  let fullHouse h =
+    match h |> sort_values |> List.group_consecutive (=) with
+    | [[t1; t2; t3]; [p1; p2]]
+    | [[p1; p2]; [t1; t2; t3]] ->
+      Some(to_int FullHouse, [t1; p1])
+    | _ -> None
+
+  let fourOfAKind h =
+    match h |> sort_values |> List.group_consecutive (=) with
+    | [[f1; f2; f3; f4]; [v]]
+    | [[v]; [f1; f2; f3; f4]] ->
+      Some(to_int FourOfAKind, [f1; v])
+    | _ -> None
+
+  let straigthFlush h =
+    if h |> same_suit |> not then
+      None
+    else
+      match straight h with
+      | Some(r, vs) -> Some(to_int StraightFlush, vs)
+      | None -> None
+
+  let royalFlush h =
+    match (straigthFlush h) with
+    | Some(r, vs) ->
+      if Value.VA = (List.first vs) then
+        Some(to_int RoyalFlush, [])
+      else
+        None
+    | None -> None
+
+  let compare (Hand h1) (Hand h2) =
+    let rank_funcs = [
+      royalFlush; straigthFlush; fourOfAKind; fullHouse; flush;
+      straight; threeOfAKind; twoPairs; onePair; highCard
+    ] in
+    let h1_cards = h1 |> List.map (fun (Card(v, s)) -> (v, s)) in
+    let h2_cards = h2 |> List.map (fun (Card(v, s)) -> (v, s)) in
+    let r1 = List.find_map (fun rf -> rf h1_cards) rank_funcs in
+    let r2 = List.find_map (fun rf -> rf h2_cards) rank_funcs in
+    Tuple2.compare
+      ~cmp1:Int.compare
+      ~cmp2:(List.compare Value.compare)
+      r1 r2
+end
+
+(*******************************************************************************)
+module HandLoader : sig
+  (** [of_string s] converts a string into two hands. *)
+  val of_string: string -> hand_t * hand_t
+end = struct
   let value_of_char = function
     | c when c >= '1' && c <= '9' ->
       (c |> Char.code) - ('1' |> Char.code) + 1
@@ -102,12 +211,12 @@ module HandLoader = struct
   let card_of_string s =
     match (s |> String.to_list) with
     | [v; s] ->
-      let value = v |> value_of_char in
+      let value = v |> value_of_char |> Value.of_int in
       let suit = s |> suit_of_char in
       Card(value, suit)
     | _ -> invalid_arg "invalid string for card"
 
-  let hands_of_string s =
+  let of_string s =
     let ss = s |> String.split_on_char ' ' |> List.map String.trim in
     if (ss |> List.length) <> 10 then
       invalid_arg "invalid string for hands"
@@ -118,9 +227,13 @@ module HandLoader = struct
       (h1, h2)
 end
 
-let hand_compare (h1, h2) =
-  0
-
 (*******************************************************************************)
 let solve hands =
+  hands
+  |> Enum.map (fun s -> HandLoader.of_string s)
+  |> Enum.map (fun (h1, h2) -> HandCompare.compare h1 h2)
+  |> Enum.filter (fun i -> i = 1)
+  |> Enum.count
+
+let solve_file path =
   0
