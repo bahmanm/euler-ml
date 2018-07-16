@@ -1,6 +1,5 @@
 (* Author: Bahman Movaqar <Bahman@BahmanM.com> *)
 open OUnit2
-open Batteries
 
 let test_solve _ =
   assert_equal

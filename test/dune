@@ -1,0 +1,3 @@
+(executable
+ (name test_euler)
+ (libraries euler_lib oUnit batteries))

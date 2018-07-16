@@ -105,27 +105,27 @@ end = struct
 
     let onePair h =
       match h |> sort_values |> List.group_consecutive (=) with
-      | [[p1; p2]; [v1]; [v2]; [v3]]
-      | [[v1]; [p1; p2]; [v2]; [v3]]
-      | [[v1]; [v2]; [p1; p2]; [v3]]
-      | [[v1]; [v2]; [v3]; [p1; p2]] ->
-        Some(to_int OnePair, [p1; v1; v2; v3])
+      | [[p; _]; [v1]; [v2]; [v3]]
+      | [[v1]; [p; _]; [v2]; [v3]]
+      | [[v1]; [v2]; [p; _]; [v3]]
+      | [[v1]; [v2]; [v3]; [p; _]] ->
+        Some(to_int OnePair, [p; v1; v2; v3])
       | _ -> None
 
     let twoPairs h =
       match h |> sort_values |> List.group_consecutive (=) with
-      | [[p1; p2]; [p'1; p'2]; [v]]
-      | [[p1; p2]; [v]; [p'1; p'2]]
-      | [[v]; [p1; p2]; [p'1; p'2]] ->
+      | [[p1; _]; [p'1; _]; [v]]
+      | [[p1; _]; [v]; [p'1; _]]
+      | [[v]; [p1; _]; [p'1; _]] ->
         Some(to_int TwoPairs, [p1; p'1; v])
       | _ -> None
 
     let threeOfAKind h =
       match h |> sort_values |> List.group_consecutive (=) with
-      | [[t1; t2; t3]; [v1]; [v2]]
-      | [[v1]; [t1; t2; t3]; [v2]]
-      | [[v1]; [v2]; [t1; t2; t3]] ->
-        Some(to_int ThreeOfAKind, [t1; v1; v2])
+      | [[t; _; _]; [v1]; [v2]]
+      | [[v1]; [t; _; _]; [v2]]
+      | [[v1]; [v2]; [t; _; _]] ->
+        Some(to_int ThreeOfAKind, [t; v1; v2])
       | _ -> None
 
     let straight h =
@@ -144,16 +144,16 @@ end = struct
 
     let fullHouse h =
       match h |> sort_values |> List.group_consecutive (=) with
-      | [[t1; t2; t3]; [p1; p2]]
-      | [[p1; p2]; [t1; t2; t3]] ->
-        Some(to_int FullHouse, [t1; p1])
+      | [[t; _; _]; [p; _]]
+      | [[p; _]; [t; _; _]] ->
+        Some(to_int FullHouse, [t; p])
       | _ -> None
 
     let fourOfAKind h =
       match h |> sort_values |> List.group_consecutive (=) with
-      | [[f1; f2; f3; f4]; [v]]
-      | [[v]; [f1; f2; f3; f4]] ->
-        Some(to_int FourOfAKind, [f1; v])
+      | [[f; _; _; _]; [v]]
+      | [[v]; [f; _; _; _]] ->
+        Some(to_int FourOfAKind, [f; v])
       | _ -> None
 
     let straigthFlush h =
@@ -161,12 +161,12 @@ end = struct
         None
       else
         match straight h with
-        | Some(r, vs) -> Some(to_int StraightFlush, vs)
+        | Some(_, vs) -> Some(to_int StraightFlush, vs)
         | None -> None
 
     let royalFlush h =
       match (straigthFlush h) with
-      | Some(r, vs) ->
+      | Some(_, vs) ->
         if Value.VA = (List.first vs) then
           Some(to_int RoyalFlush, [])
         else

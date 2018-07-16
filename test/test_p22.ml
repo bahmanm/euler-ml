@@ -13,7 +13,7 @@ let test_solve _ =
 
   assert_equal
     (File.with_file_in
-       "res/p022_names.txt"
+       "./test/res/p022_names.txt"
        (fun i -> IO.read_all i)
      |> P22.solve)
     (871198282 |> Int64.of_int)

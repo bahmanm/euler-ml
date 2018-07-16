@@ -1,6 +1,5 @@
 (* Author: Bahman Movaqar <Bahman@BahmanM.com> *)
 (* https://projecteuler.net/problem=22 *)
-open Batteries
 
 val solve: string -> Int64.t
 (** [solve string]

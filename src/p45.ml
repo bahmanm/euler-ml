@@ -41,8 +41,8 @@ let solve min =
   min
   |> Enum.range
   |> Enum.map (fun x -> (x, triangle x |> Float.of_int))
-  |> Enum.find_map (fun (x, tx) ->
+  |> Enum.find_map (fun (_, tx) ->
       (reverse_pentagonal tx, reverse_hexagonal tx) |> function
-      | (Some(p), Some(h)) -> Some(tx |> Float.to_int)
+      | (Some(_), Some(_)) -> Some(tx |> Float.to_int)
       | _ -> None
     )

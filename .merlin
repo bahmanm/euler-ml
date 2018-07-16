@@ -1,6 +1,0 @@
-S src/**
-S test/**
-
-PKG oUnit batteries
-
-B _build/**

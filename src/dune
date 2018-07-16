@@ -1,0 +1,4 @@
+(library
+ (name euler_lib)
+ (libraries batteries)
+ (wrapped false))
