@@ -1,7 +1,7 @@
 # Project Euler in OCaml #
 Solutions to [Project Euler](https://projecteuler.net/) problems in [OCaml](http://ocaml.org/):
 
-* [Oasis](http://oasis.forge.ocamlcore.org/) for building the project
+* [Dune](https://github.com/ocaml/dune) for building the project
 * [Batteries](http://batteries.forge.ocamlcore.org/) as the stdlib
 * [OUnit](http://ounit.forge.ocamlcore.org/) for testing
 
@@ -12,8 +12,7 @@ Provided that you have already [installed OPAM](https://opam.ocaml.org/doc/Insta
 install a couple of dependencies:
 
 ```
-$ opam install oasis ounit batteries
+$ opam install dune ounit batteries
 $ cd euler-ml
-$ oasis setup
-$ ./configure --enable-tests && make test
+$ dune exec ./test/test_euler.exe
 ```
