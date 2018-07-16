@@ -22,3 +22,5 @@ META
 /_tags
 /Makefile
 /configure
+.merlin
+dune-project
