@@ -128,6 +128,7 @@ module type SCORE = sig
   val of_enum : string Enum.t -> t Enum.t
 end
 
+(******************************************************************************)
 (** Private implementation module *)
 module ScoreImpl = struct
   type t = P1 | P2 | Draw | Invalid
