@@ -1,20 +1,21 @@
 (* Author: Bahman Movaqar <Bahman@BahmanM.com> *)
+(* https://projecteuler.net/problem=15 *)
 open Batteries
-open Big_int
 
-let two = 2 |> of_int
+module Big = Big_int
+let one = Big.one
+let two = 2 |> Big.of_int
 
 let factorial n =
   let rec factorial' n result =
-    if equal n one then
-      result
-    else
-      factorial' (sub n one) (mul n result)
+    match Big.equal n one with
+    | true -> result
+    | false -> factorial' (Big.sub n one) (Big.mul n result)
   in
   factorial' n one
 
-let solve n =
-  let nn = n |> of_int in
-  let numerator = factorial (mul nn two) in
-  let denominator = pow (factorial nn) two in
-  div numerator denominator
+let solution n =
+  let n = n |> Big_int.of_int in
+  let numerator = factorial (Big.mul n two) in
+  let denominator = Big.pow (factorial n) two in
+  Big.div numerator denominator

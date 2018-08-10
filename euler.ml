@@ -86,7 +86,7 @@ let problems : Printer.problem_t list =
 
     (* 15 *)
     begin fun _ ->
-      let (r, t) = Utils.time (fun _ -> P15.solve 20) in
+      let (r, t) = Utils.time (fun _ -> P15.solution 20) in
       Printer.result_line 15 (Utils.thousand_sep (Big_int.string_of_big_int r)) t
     end;
 

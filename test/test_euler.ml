@@ -5,7 +5,7 @@ let _ =
   Test_p1.run();
   Test_p2.run();
   Test_p3.run();
-  run_test_tt_main Test_p15.p15_suite;
+  Test_p15.run();
   run_test_tt_main Test_p22.p22_suite;
   run_test_tt_main Test_p41.p41_suite;
   run_test_tt_main Test_p45.p45_suite;

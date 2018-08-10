@@ -2,17 +2,24 @@
 open OUnit2
 open Batteries
 
-let test_solve _ =
-  assert_equal
-    (Big_int.equal (P15.solve 2) (6 |> Big_int.of_int))
-    true;
-  assert_equal
-    (Big_int.equal (P15.solve 3) (20 |> Big_int.of_int))
-    true;
-  assert_equal
-    (Big_int.equal (P15.solve 20) (137846528820 |> Big_int.of_int))
-    true
+let solution _ =
+  let printer = Big_int.to_string in
+  let cmp = Big_int.equal in
 
-let p15_suite =
+  let data = 2 in
+  let expected = 6 |> Big_int.of_int in
+  let actual = data |> P15.solution in
+  assert_equal ~cmp ~printer expected actual;
+
+  let data = 3 in
+  let expected = 20 |> Big_int.of_int in
+  let actual = data |> P15.solution in
+  assert_equal ~cmp ~printer expected actual
+
+let suite_p15 =
   "P15 Suite" >:::
-  ["solve" >:: test_solve]
+  ["solution" >:: solution]
+
+(******************************************************************************)
+let run _ =
+  run_test_tt_main suite_p15
