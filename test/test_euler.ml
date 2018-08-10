@@ -2,7 +2,7 @@
 open OUnit2
 
 let _ =
-  run_test_tt_main Test_p1.p1_suite;
+  Test_p1.run();
   run_test_tt_main Test_p2.p2_suite;
   run_test_tt_main Test_p3.p3_suite;
   run_test_tt_main Test_p15.p15_suite;
