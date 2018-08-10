@@ -1,15 +1,14 @@
 (* Author: Bahman Movaqar <Bahman@BahmanM.com> *)
-open Batteries
+(* https://projecteuler.net/problem=2 *)
 
-
-let solve limit =
-  let rec solve' term1 term2 result =
-    match term1 + term2 with
-    | term3 when term3 <= limit -> begin
-      match (term3 mod 2) with
-      | 0 -> solve' term2 term3 (result + term3)
-      | _ -> solve' term2 term3 result
+let solution limit =
+  let rec solution' t1 t2 result =
+    match t1 + t2 with
+    | t3 when t3 <= limit -> begin
+        match (t3 mod 2 = 0) with
+        | true -> solution' t2 t3 (result + t3)
+        | false -> solution' t2 t3 result
     end
     | _ -> result
   in
-  solve' 1 2 2
+  solution' 1 1 0

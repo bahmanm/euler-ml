@@ -1,17 +1,23 @@
 (* Author: Bahman Movaqar <Bahman@BahmanM.com> *)
 open OUnit2
 
-let test_solve _ =
-  assert_equal
-    (P2.solve 10)
-    10;
-  assert_equal
-    (P2.solve 100)
-    44;
-  assert_equal
-    (P2.solve 4_000_000)
-    4613732
+let solution _ =
+  let printer = string_of_int in
 
-let p2_suite =
+  let data = 10 in
+  let expected = 10 in
+  let actual = data |> P2.solution in
+  assert_equal ~printer expected actual;
+
+  let data = 100 in
+  let expected = 44 in
+  let actual = data |> P2.solution in
+  assert_equal ~printer expected actual
+
+let suite_p2 =
   "P2 Suite" >:::
-  ["solve" >:: test_solve]
+  ["solution" >:: solution]
+
+(******************************************************************************)
+let run _ =
+  run_test_tt_main suite_p2
