@@ -74,13 +74,13 @@ let problems : Printer.problem_t list =
 
     (* 2 *)
     begin fun _ ->
-      let (r, t) = Utils.time (fun _ -> P2.solve 4_000_000) in
+      let (r, t) = Utils.time (fun _ -> P2.solution 4_000_000) in
       Printer.result_line 2 (Utils.thousand_sep (string_of_int r)) t
     end;
 
     (* 3 *)
     begin fun _ ->
-      let (r, t) = Utils.time (fun _ -> P3.solve 600_851_475_143) in
+      let (r, t) = Utils.time (fun _ -> P3.solution 600_851_475_143) in
       Printer.result_line 3 (Utils.thousand_sep (string_of_int r)) t
     end;
 

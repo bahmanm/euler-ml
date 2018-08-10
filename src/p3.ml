@@ -1,11 +1,12 @@
 (* Author: Bahman Movaqar <Bahman@BahmanM.com> *)
-open Batteries
+(* https://projecteuler.net/problem=3 *)
 
-let rec largest_prime_factor n f =
-  if n = f then n
-  else match n mod f with
-    | 0 -> largest_prime_factor (n / f) f
-    | _ -> largest_prime_factor n (f + 1)
-
-let solve n =
+let solution n =
+  let rec largest_prime_factor n f =
+    match n = f with
+    | true -> n
+    | false -> match n mod f with
+      | 0 -> largest_prime_factor (n / f) f
+      | _ -> largest_prime_factor n (f + 1)
+  in
   largest_prime_factor n 2
